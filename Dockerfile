@@ -20,7 +20,7 @@ WORKDIR /home/node/app
 
 
 # Clone repository and set permissions
-RUN git clone https://github.com/Asdisarson/wpnova-api.git . \
+RUN git clone https://github.com/Asdisarson/wp.git . \
     && chown -R node:node /home/node/app
 
 # Install dependencies and configure environment as root
