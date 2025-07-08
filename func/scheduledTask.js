@@ -109,10 +109,23 @@ const scheduledTask = async () => {
 
             // Click the login button and wait for navigation
             console.log('Clicking the login button...');
-            await Promise.all([
-                page.waitForNavigation(),
-                page.click('.button.woocommerce-button.woocommerce-form-login__submit'),
-            ]);
+            
+            // Click login button and handle navigation more robustly
+            try {
+                // Click the login button
+                await page.click('.button.woocommerce-button.woocommerce-form-login__submit');
+                
+                // Wait for either navigation or a timeout
+                try {
+                    await page.waitForNavigation({ timeout: 10000 });
+                    console.log('Navigation completed after login');
+                } catch (navError) {
+                    console.log('Navigation timeout or failed - checking page state');
+                }
+                
+            } catch (clickError) {
+                console.error('Error clicking login button:', clickError);
+            }
 
             // Verify successful login
             console.log('Verifying login success...');
