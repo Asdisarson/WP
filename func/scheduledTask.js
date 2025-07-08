@@ -131,7 +131,7 @@ const scheduledTask = async () => {
             console.log('Verifying login success...');
             try {
                 // Wait a moment for the page to fully load
-                await page.waitForTimeout(2000);
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 
                 // Check current URL - successful login should redirect away from login page
                 const currentUrl = page.url();

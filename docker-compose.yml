@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: realgpl-automation
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=3000
+    env_file:
+      - .env
+    volumes:
+      # Persist downloads
+      - ./public/downloads:/app/public/downloads
+      # Persist data files
+      - ./files.json:/app/files.json
+      - ./db.json:/app/db.json
+    networks:
+      - automation-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.realgpl.service=automation-suite"
+      - "com.realgpl.version=1.0.0"
+
+  # Optional: Add a reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: realgpl-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - automation-network
+    profiles:
+      - production
+
+  # Optional: Add monitoring
+  watchtower:
+    image: containrrr/watchtower
+    container_name: realgpl-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=3600
+    profiles:
+      - monitoring
+
+networks:
+  automation-network:
+    driver: bridge
+
+volumes:
+  downloads:
+    driver: local
+  data:
+    driver: local 
