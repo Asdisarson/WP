@@ -70,102 +70,12 @@ const scheduledTask = async () => {
 
             console.log('Typing password...');
             await page.type('#password',password.toString());
-
-            // Check for and handle the "Prove your humanity" math challenge
-            try {
-                const humanityChallenge = await page.$('.humanity');
-                if (humanityChallenge) {
-                    console.log('Humanity challenge detected, solving math equation...');
-                    
-                    // Extract the math equation text
-                    const challengeText = await page.evaluate(() => {
-                        const humanityDiv = document.querySelector('.humanity');
-                        return humanityDiv ? humanityDiv.textContent : null;
-                    });
-                    
-                    if (challengeText) {
-                        // Extract numbers from the equation (format: "number + number =")
-                        const mathMatch = challengeText.match(/(\d+)\s*\+\s*(\d+)\s*=/);
-                        if (mathMatch) {
-                            const num1 = parseInt(mathMatch[1]);
-                            const num2 = parseInt(mathMatch[2]);
-                            const answer = num1 + num2;
-                            
-                            console.log(`Solving: ${num1} + ${num2} = ${answer}`);
-                            
-                            // Fill in the answer
-                            await page.type('input[name="brute_num"]', answer.toString());
-                            console.log('Math challenge solved!');
-                        } else {
-                            console.log('Could not parse math equation from:', challengeText);
-                        }
-                    }
-                } else {
-                    console.log('No humanity challenge detected');
-                }
-            } catch (error) {
-                console.log('Error handling humanity challenge:', error.message);
-            }
-
             // Click the login button and wait for navigation
             console.log('Clicking the login button...');
-            
-            // Click login button and handle navigation more robustly
-            try {
-                // Click the login button
-                await page.click('.button.woocommerce-button.woocommerce-form-login__submit');
-                
-                // Wait for either navigation or a timeout
-                try {
-                    await page.waitForNavigation({ timeout: 10000 });
-                    console.log('Navigation completed after login');
-                } catch (navError) {
-                    console.log('Navigation timeout or failed - checking page state');
-                }
-                
-            } catch (clickError) {
-                console.error('Error clicking login button:', clickError);
-            }
-
-            // Verify successful login
-            console.log('Verifying login success...');
-            try {
-                // Wait a moment for the page to fully load
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Check current URL - successful login should redirect away from login page
-                const currentUrl = page.url();
-                console.log('Current URL after login:', currentUrl);
-                
-                // Check for login error messages
-                const loginError = await page.$('.woocommerce-error, .login-error, .error');
-                if (loginError) {
-                    const errorText = await page.evaluate(el => el.textContent, loginError);
-                    throw new Error(`Login failed: ${errorText}`);
-                }
-                
-                // Check if we're still on the login page (indicates login failure)
-                if (currentUrl.includes('/my-account/') && currentUrl.includes('action=login')) {
-                    throw new Error('Login failed: Still on login page');
-                }
-                
-                // Look for account-specific elements that indicate successful login
-                const accountElements = await page.$('.woocommerce-MyAccount-navigation, .logout, [href*="logout"]');
-                if (!accountElements) {
-                    // Try an alternative check - look for the absence of login form
-                    const loginForm = await page.$('#customer_login');
-                    if (loginForm) {
-                        throw new Error('Login failed: Login form still present');
-                    }
-                }
-                
-                console.log('✅ Login verification successful!');
-                
-            } catch (verificationError) {
-                console.error('❌ Login verification failed:', verificationError.message);
-                await browser.close();
-                throw new Error(`Login verification failed: ${verificationError.message}`);
-            }
+            await Promise.all([
+                page.waitForNavigation(),
+                page.click('.button.woocommerce-button.woocommerce-form-login__submit'),
+            ]);
 
             // Go to the changelog page
             console.log('Going to the changelog page...');
