@@ -114,6 +114,46 @@ const scheduledTask = async () => {
                 page.click('.button.woocommerce-button.woocommerce-form-login__submit'),
             ]);
 
+            // Verify successful login
+            console.log('Verifying login success...');
+            try {
+                // Wait a moment for the page to fully load
+                await page.waitForTimeout(2000);
+                
+                // Check current URL - successful login should redirect away from login page
+                const currentUrl = page.url();
+                console.log('Current URL after login:', currentUrl);
+                
+                // Check for login error messages
+                const loginError = await page.$('.woocommerce-error, .login-error, .error');
+                if (loginError) {
+                    const errorText = await page.evaluate(el => el.textContent, loginError);
+                    throw new Error(`Login failed: ${errorText}`);
+                }
+                
+                // Check if we're still on the login page (indicates login failure)
+                if (currentUrl.includes('/my-account/') && currentUrl.includes('action=login')) {
+                    throw new Error('Login failed: Still on login page');
+                }
+                
+                // Look for account-specific elements that indicate successful login
+                const accountElements = await page.$('.woocommerce-MyAccount-navigation, .logout, [href*="logout"]');
+                if (!accountElements) {
+                    // Try an alternative check - look for the absence of login form
+                    const loginForm = await page.$('#customer_login');
+                    if (loginForm) {
+                        throw new Error('Login failed: Login form still present');
+                    }
+                }
+                
+                console.log('✅ Login verification successful!');
+                
+            } catch (verificationError) {
+                console.error('❌ Login verification failed:', verificationError.message);
+                await browser.close();
+                throw new Error(`Login verification failed: ${verificationError.message}`);
+            }
+
             // Go to the changelog page
             console.log('Going to the changelog page...');
             await page.goto('https://www.realgpl.com/changelog/?99936_results_per_page=500');
