@@ -1,15 +1,17 @@
 # Environment variables and secrets
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.development
+.env.test
+.env.production
+.env.staging
 
 # Node.js dependencies
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
 # Runtime data
 pids
@@ -24,8 +26,24 @@ coverage/
 # nyc test coverage
 .nyc_output
 
-# Dependency directories
-jspm_packages/
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# Downloaded files and generated content
+public/downloads/
+public/data.csv
+public/error.csv
+files.json
+db.json
+func/tempDB.json
+func/files.json
+
+# Logs
+logs
+*.log
 
 # Optional npm cache directory
 .npm
@@ -48,42 +66,30 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# parcel-bundler cache (https://parceljs.org/)
+# parcel-bundler cache
 .cache
 .parcel-cache
 
-# next.js build output
+# Next.js build output
 .next
 
-# nuxt.js build output
+# Nuxt.js build / generate output
 .nuxt
+dist
 
-# vuepress build output
-.vuepress/dist
+# Gatsby files
+.cache/
+public
 
-# Serverless directories
-.serverless/
+# Storybook build outputs
+.out
+.storybook-out
 
-# FuseBox cache
-.fusebox/
+# Temporary folders
+tmp/
+temp/
 
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Application-specific
-public/downloads/*.zip
-public/downloads/*.pdf
-public/downloads/*.rar
-public/downloads/*.tar.gz
-files.json
-db.json
-tempDB.json
-*.log
-
-# OS generated files
+# Operating System Files
 .DS_Store
 .DS_Store?
 ._*
@@ -92,30 +98,23 @@ tempDB.json
 ehthumbs.db
 Thumbs.db
 
-# IDE and editor files
+# IDE and Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Backup files
-*.bak
-*.backup
-*.old
-
-# Docker
-.dockerignore
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-
 # Test files
 test-*.js
-*.test.local.js
 
-# Build artifacts
-dist/
-build/ 
+# Docker
+docker-compose.override.yml
+
+# Backup files
+*.backup
+*.bak
+
+# Local configuration
+config/local.js
+config/local.json 
