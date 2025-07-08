@@ -1,92 +1,27 @@
 {
-  "name": "realgpl-automation-suite",
-  "version": "1.0.0",
-  "description": "Professional automation suite for content monitoring and file management from GPL marketplaces",
-  "main": "app.js",
+  "name": "untitled",
+  "version": "0.0.0",
   "private": true,
-  "author": "Cyborg",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/your-org/realgpl-automation-suite.git"
-  },
-  "keywords": [
-    "automation",
-    "web-scraping",
-    "file-management",
-    "scheduling",
-    "express",
-    "puppeteer"
-  ],
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
-  },
   "scripts": {
     "start": "node -max-old-space-size=6144 ./bin/www",
-    "dev": "NODE_ENV=development nodemon -max-old-space-size=6144 ./bin/www",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
-    "test:integration": "jest --testPathPattern=tests/integration",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "validate": "npm run lint && npm run format:check && npm run test",
-    "clean": "rm -rf public/downloads/* && rm -rf coverage/",
-    "build": "npm run clean && npm run validate",
-    "docker:build": "docker build -t realgpl-automation .",
-    "docker:run": "docker run -p 3000:3000 --env-file .env realgpl-automation",
-    "schedule:test": "node scripts/test-scheduler.js",
-    "schedule:yesterday": "node scripts/run-yesterday.js",
-    "schedule:today": "node scripts/run-today.js",
-    "health:check": "curl -f http://localhost:3000/health || exit 1",
-    "logs:clean": "find . -name '*.log' -delete",
-    "deps:check": "npm audit && npm outdated",
-    "deps:update": "npm update && npm audit fix"
+    "test": "node-dev -max-old-space-size=6144 ./bin/www"
   },
   "dependencies": {
-    "axios": "^1.6.0",
-    "cookie-parser": "^1.4.6",
-    "debug": "^4.3.5",
+    "axios": "1.6.0",
+    "cookie-parser": "~1.4.6",
+    "debug": "4.3.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.1.5",
-    "helmet": "^7.1.0",
+    "express": "~4.19.2",
     "json2csv": "^6.0.0-alpha.2",
-    "morgan": "^1.10.0",
+    "morgan": "~1.10.0",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
+    "npm": "^10.8.1",
     "papaparse": "^5.4.1",
     "puppeteer": "^22.11.2",
+    "puppeteer-core": "^22.11.2",
     "simple-json-db": "^2.0.0",
-    "uuid": "^10.0.0",
-    "winston": "^3.11.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-node": "^11.1.0",
-    "jest": "^29.7.0",
-    "nodemon": "^3.0.2",
-    "prettier": "^3.1.1",
-    "supertest": "^6.3.3"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "collectCoverageFrom": [
-      "func/**/*.js",
-      "app.js",
-      "!**/node_modules/**"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 70,
-        "functions": 70,
-        "lines": 70,
-        "statements": 70
-      }
-    }
+    "uuid": "^10.0.0"
   }
 }
