@@ -87,14 +87,9 @@ const scheduledTask = async () => {
                 month: 'long',
                 day: 'numeric',
             });
-            const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-            });
 
             // Extract data from rows matching today or yesterday's date
-            const data = await page.evaluate((today, yesterday) => {
+            const data = await page.evaluate((today) => {
                 const rows = document.querySelectorAll('tr.awcpt-row');
                 const rowDataArray = [];
 
@@ -121,7 +116,7 @@ const scheduledTask = async () => {
                 }
 
                 return rowDataArray;
-            }, today, yesterday);
+            }, today);
 
             console.log('Changelog entries for today');
             console.log(data);
