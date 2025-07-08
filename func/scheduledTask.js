@@ -70,6 +70,43 @@ const scheduledTask = async () => {
 
             console.log('Typing password...');
             await page.type('#password',password.toString());
+
+            // Check for and handle the "Prove your humanity" math challenge
+            try {
+                const humanityChallenge = await page.$('.humanity');
+                if (humanityChallenge) {
+                    console.log('Humanity challenge detected, solving math equation...');
+                    
+                    // Extract the math equation text
+                    const challengeText = await page.evaluate(() => {
+                        const humanityDiv = document.querySelector('.humanity');
+                        return humanityDiv ? humanityDiv.textContent : null;
+                    });
+                    
+                    if (challengeText) {
+                        // Extract numbers from the equation (format: "number + number =")
+                        const mathMatch = challengeText.match(/(\d+)\s*\+\s*(\d+)\s*=/);
+                        if (mathMatch) {
+                            const num1 = parseInt(mathMatch[1]);
+                            const num2 = parseInt(mathMatch[2]);
+                            const answer = num1 + num2;
+                            
+                            console.log(`Solving: ${num1} + ${num2} = ${answer}`);
+                            
+                            // Fill in the answer
+                            await page.type('input[name="brute_num"]', answer.toString());
+                            console.log('Math challenge solved!');
+                        } else {
+                            console.log('Could not parse math equation from:', challengeText);
+                        }
+                    }
+                } else {
+                    console.log('No humanity challenge detected');
+                }
+            } catch (error) {
+                console.log('Error handling humanity challenge:', error.message);
+            }
+
             // Click the login button and wait for navigation
             console.log('Clicking the login button...');
             await Promise.all([
